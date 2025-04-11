@@ -1,52 +1,55 @@
 package model;
 
 public class Booking {
-    private String bookingId;
+    private static int bookingCounter = 0; //to generate unique booking IDs
+    private int bookingId;
     private Patient patient;
+    private Physiotherapist physiotherapist;
     private Treatment treatment;
-    private String status; // "booked", "attended", "cancelled"
+    private AppointmentStatus status;
 
-    public Booking(String bookingId, Patient patient, Treatment treatment, String status) {
-        this.bookingId = bookingId;
+    // Constructor
+    public Booking(Patient patient, Physiotherapist physiotherapist, Treatment treatment) {
+        this.bookingId = ++bookingCounter;
         this.patient = patient;
+        this.physiotherapist = physiotherapist;
         this.treatment = treatment;
-        this.status = status;
+        this.status = AppointmentStatus.BOOKED;
+        this.treatment.setStatus(AppointmentStatus.BOOKED); 
     }
 
     // Getters and Setters
-    public String getBookingId() {
+    public int getBookingId() {
         return bookingId;
-    }
-    public void setBookingId(String bookingId) {
-        this.bookingId = bookingId;
     }
 
     public Patient getPatient() {
         return patient;
     }
-    public void setPatient(Patient patient) {
-        this.patient = patient;
+
+    public Physiotherapist getPhysiotherapist() {
+        return physiotherapist;
     }
 
     public Treatment getTreatment() {
         return treatment;
     }
-    public void setTreatment(Treatment treatment) {
-        this.treatment = treatment;
-    }
 
-    public String getStatus() {
+    public AppointmentStatus getStatus() {
         return status;
     }
-    public void setStatus(String status) {
+
+    public void setStatus(AppointmentStatus status) {
         this.status = status;
     }
 
-    public void cancelBooking() {
-        this.status = "cancelled";
+    public void cancel() {
+        this.status = AppointmentStatus.CANCELLED;
+        this.treatment.setStatus(AppointmentStatus.AVAILABLE); 
     }
 
-    
-
-
+    public void attend() {
+        this.status = AppointmentStatus.ATTENDED;
+        this.treatment.setStatus(AppointmentStatus.ATTENDED); 
+    }
 }
