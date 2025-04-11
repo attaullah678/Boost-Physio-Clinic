@@ -1,46 +1,82 @@
 package model;
-
-import java.util.List;
+import java.util.*;
 
 public class Physiotherapist {
     private int id;
     private String name;
     private String address;
-    private String phone;
-    private String[] expertise; 
-    private List<Treatment> timetable;
+    private String phoneNumber;
+    private List<String> areasOfExpertise;
+    private Map<String, List<Treatment>> timetable; 
 
-    public Physiotherapist(int id, String name, String address, String phone, String[] expertise, List<Treatment> timetable) {
+    public Physiotherapist(int id, String name, String address, String phoneNumber, List<String> areasOfExpertise) {
         this.id = id;
         this.name = name;
         this.address = address;
-        this.phone = phone;
-        this.expertise = expertise;
-        this.timetable = timetable;
+        this.phoneNumber = phoneNumber;
+        this.areasOfExpertise = new ArrayList<>(areasOfExpertise); 
+        this.timetable = new HashMap<>();
     }
-    
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public int getId(){
+        return id;
+    }
 
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
+    public String getName() {
+        return name;
+    }
 
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public String[] getExpertise() { return expertise; }
-    public void setExpertise(String[] expertise) { this.expertise = expertise; }
-
-    public List<Treatment> getTimetable() {
+    public Map<String, List<Treatment>> getTimetable() {
         return timetable;
     }
-    
-    public void setTimetable(List<Treatment> timetable) {
+
+    public void setTimetable(Map<String, List<Treatment>> timetable) {
         this.timetable = timetable;
     }
 
+    public void addExpertise(String expertise) {
+        this.areasOfExpertise.add(expertise);
+    }
+
+    public void removeExpertise(String expertise) {
+        this.areasOfExpertise.remove(expertise);
+    }
+    public List<String> getAreasOfExpertise() {
+        return new ArrayList<>(areasOfExpertise); 
+    }
     
+
+    public List<Treatment> getAvailableTreatments(String expertise) {
+        List<Treatment> availableTreatments = new ArrayList<>();
+        for (String week : timetable.keySet()) {
+            for (Treatment treatment : timetable.get(week)) {
+                if (treatment.getExpertise().equals(expertise) && treatment.getStatus() == AppointmentStatus.AVAILABLE) {
+                    availableTreatments.add(treatment);
+                }
+            }
+        }
+        return availableTreatments;
+    }
+
+    public List<Treatment> getAvailableTreatmentsForPhysio() {
+        List<Treatment> availableTreatments = new ArrayList<>();
+        for (String week : timetable.keySet()) {
+            availableTreatments.addAll(timetable.get(week));
+        }
+        return availableTreatments;
+    }
+
+
+    public String getAddress() {
+        return address;
+    }
+
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 }
