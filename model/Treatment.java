@@ -1,24 +1,46 @@
 package model;
-
 public class Treatment {
     private String name;
-    private String dateTime; // Using String for simplicity, later we can use a date-time object
-    private Physiotherapist physiotherapist;
+    private String expertise;
+    private String dateTime;
+    private AppointmentStatus status; 
 
-    // Constructor
-    public Treatment(String name, String dateTime, Physiotherapist physiotherapist) {
+    public Treatment(String name, String expertise, String dateTime) {
         this.name = name;
+        this.expertise = expertise;
         this.dateTime = dateTime;
-        this.physiotherapist = physiotherapist;
+        this.status = AppointmentStatus.AVAILABLE; 
     }
 
-    // Getters and Setters
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getName() {
+        return name;
+    }
 
-    public String getDateTime() { return dateTime; }
-    public void setDateTime(String dateTime) { this.dateTime = dateTime; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public Physiotherapist getPhysiotherapist() { return physiotherapist; }
-    public void setPhysiotherapist(Physiotherapist physiotherapist) { this.physiotherapist = physiotherapist; }
+    public String getExpertise() {
+        return expertise;
+    }
+
+    public void setExpertise(String expertise) {
+        this.expertise = expertise;
+    }
+
+    public String getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public AppointmentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AppointmentStatus status) {
+        this.status = status;
+    }
 }
