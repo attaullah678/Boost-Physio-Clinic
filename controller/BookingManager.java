@@ -26,6 +26,9 @@ public class BookingManager {
         return bookings;
     }
 
+    public void addPhysiotherapist(Physiotherapist physiotherapist) {
+        physiotherapists.add(physiotherapist);
+    }
     
     public void addPatient(Patient patient) {
         patients.add(patient);
@@ -44,7 +47,7 @@ public class BookingManager {
         if (patientToRemove != null) {
             bookings.removeIf(booking -> {
                 if (booking.getPatient().getId() == patientId) {
-                    booking.cancel(); // Optional: mark as cancelled before removing
+                    booking.cancel(); 
                     return true;
                 }
                 return false;
@@ -58,6 +61,30 @@ public class BookingManager {
             return false;
         }
     }
+
+    
+
+    public Booking bookAppointment(Patient patient, Physiotherapist physiotherapist, Treatment treatment) {
+        if (treatment.getStatus() != AppointmentStatus.AVAILABLE) {
+            System.out.println("Treatment already booked.");
+            return null;
+        }
+
+        for (Booking booking : bookings) {
+            if (booking.getPatient().equals(patient) &&
+                booking.getTreatment().getDateTime().equals(treatment.getDateTime()) &&
+                booking.getStatus() != AppointmentStatus.CANCELLED) {
+                System.out.println("Patient has a time conflict with another appointment!");
+                return null;
+            }
+        }
+
+        Booking booking = new Booking(patient, physiotherapist, treatment);
+        bookings.add(booking);
+        System.out.println("Appointment booked successfully with booking ID: " + booking.getBookingId());
+        return booking;
+    }
+
     
     
 }
