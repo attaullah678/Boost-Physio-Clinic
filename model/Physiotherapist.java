@@ -48,27 +48,6 @@ public class Physiotherapist {
     public List<String> getAreasOfExpertise() {
         return new ArrayList<>(areasOfExpertise); 
     }
-    
-
-    public List<Treatment> getAvailableTreatments(String expertise) {
-        List<Treatment> availableTreatments = new ArrayList<>();
-        for (String week : timetable.keySet()) {
-            for (Treatment treatment : timetable.get(week)) {
-                if (treatment.getExpertise().equals(expertise) && treatment.getStatus() == AppointmentStatus.AVAILABLE) {
-                    availableTreatments.add(treatment);
-                }
-            }
-        }
-        return availableTreatments;
-    }
-
-    public List<Treatment> getAvailableTreatmentsForPhysio() {
-        List<Treatment> availableTreatments = new ArrayList<>();
-        for (String week : timetable.keySet()) {
-            availableTreatments.addAll(timetable.get(week));
-        }
-        return availableTreatments;
-    }
 
 
     public String getAddress() {
