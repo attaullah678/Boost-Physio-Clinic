@@ -134,7 +134,102 @@ public class Main {
 
             switch (choice) {
                 case 1:
-                    System.out.print("under construction");
+System.out.print("Enter Patient ID: ");
+                    int patientId = scanner.nextInt();
+                    scanner.nextLine();
+
+                    Patient patient = manager.getPatientById(patientId);
+                    if (patient == null) {
+                        System.out.println("Patient not found.");
+                        break;
+                    }
+
+                    System.out.print("Book by (1) Expertise or (2) Physiotherapist? Enter 1 or 2: ");
+                    int c = scanner.nextInt();
+                    scanner.nextLine();
+
+                    Physiotherapist selectedPhysio = null;
+                    Treatment selectedTreatment = null;
+
+                    if (c == 1) {
+                        // Expertise-based booking
+                        Set<String> allExpertise = new HashSet<>();
+                        for (Physiotherapist p : manager.getPhysiotherapists()) {
+                            allExpertise.addAll(p.getAreasOfExpertise());
+                        }
+
+                        System.out.println("Available Expertise:");
+                        allExpertise.forEach(System.out::println);
+
+                        System.out.print("Enter expertise: ");
+                        String expertise = scanner.nextLine();
+
+                        for (Physiotherapist p : manager.getPhysiotherapists()) {
+                            if (p.getAreasOfExpertise().contains(expertise)) {
+                                System.out.println("Physio: " + p.getName());
+                                for (List<Treatment> treatments : p.getTimetable().values()) {
+                                    for (Treatment t : treatments) {
+                                        if (t.getStatus() == AppointmentStatus.AVAILABLE) {
+                                            System.out.println("  - " + t.getName() + " at " + t.getDateTime());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        System.out.print("Enter Physiotherapist Name: ");
+                        String physioName = scanner.nextLine();
+                        selectedPhysio = manager.getPhysiotherapists().stream()
+                            .filter(p -> p.getName().equalsIgnoreCase(physioName))
+                            .findFirst().orElse(null);
+
+                    } else if (c == 2) {
+                        // Physiotherapist-based booking
+                        System.out.println("Available Physiotherapists:");
+                        for (Physiotherapist p : manager.getPhysiotherapists()) {
+                            System.out.println(p.getId() + " - " + p.getName());
+                        }
+
+                        System.out.print("Enter Physiotherapist ID: ");
+                        int physioId = scanner.nextInt();
+                        scanner.nextLine();
+                        selectedPhysio = manager.getPhysiotherapistById(physioId);
+                    }
+
+                    if (selectedPhysio == null) {
+                        System.out.println("Physiotherapist not found.");
+                        break;
+                    }
+
+                    System.out.println("Available Treatments:");
+                    for (List<Treatment> treatments : selectedPhysio.getTimetable().values()) {
+                        for (Treatment t : treatments) {
+                            if (t.getStatus() == AppointmentStatus.AVAILABLE) {
+                                System.out.println("  - " + t.getName() + " at " + t.getDateTime());
+                            }
+                        }
+                    }
+
+                    System.out.print("Enter Treatment Name: ");
+                    String treatmentName = scanner.nextLine();
+
+                    for (List<Treatment> treatments : selectedPhysio.getTimetable().values()) {
+                        for (Treatment t : treatments) {
+                            if (t.getName().equalsIgnoreCase(treatmentName) && t.getStatus() == AppointmentStatus.AVAILABLE) {
+                                selectedTreatment = t;
+                                break;
+                            }
+                        }
+                        if (selectedTreatment != null) break;
+                    }
+
+                    if (selectedTreatment == null) {
+                        System.out.println("No available treatment found with that name.");
+                        break;
+                    }
+
+                    manager.bookAppointment(patient, selectedPhysio, selectedTreatment);
+                    break;
                 case 2:
                     System.out.print("under construction");
                 case 3:
