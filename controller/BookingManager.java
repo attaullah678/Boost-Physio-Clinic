@@ -22,6 +22,11 @@ public class BookingManager {
         return physiotherapists;
     }
 
+    public List<Booking> getBookings() {
+        return bookings;
+    }
+
+    
     public void addPatient(Patient patient) {
         patients.add(patient);
     }
