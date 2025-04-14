@@ -85,6 +85,43 @@ public class BookingManager {
         return booking;
     }
 
+    public boolean changeBooking(int bookingId, Treatment newTreatment) {
+        Booking existingBooking = findBookingById(bookingId);
+        if (existingBooking != null) {
+            // 1. Free up the old treatment slot
+            existingBooking.getTreatment().setStatus(AppointmentStatus.AVAILABLE);
+    
+            // 2. Change the treatment for the existing booking
+            existingBooking.setTreatment(newTreatment);
+            newTreatment.setStatus(AppointmentStatus.BOOKED); // Mark new treatment as booked
+    
+            return true;
+        }
+        return false;
+    }
+    
+
+    public boolean cancelBooking(int bookingId) {
+        Booking booking = findBookingById(bookingId);
+        if (booking != null) {
+            booking.cancel();
+            System.out.println("Appointment " + bookingId + " has been cancelled.");
+            return true;
+        } else {
+            System.out.println("Booking ID not found for cancellation.");
+            return false;
+        }
+    }
+
+    public Booking findBookingById(int bookingId) {
+        for (Booking booking : bookings) {
+            if (booking.getBookingId() == bookingId) {
+                return booking;
+            }
+        }
+        return null;
+    }
+
     
     
 }
