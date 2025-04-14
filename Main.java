@@ -134,7 +134,7 @@ public class Main {
 
             switch (choice) {
                 case 1:
-System.out.print("Enter Patient ID: ");
+                    System.out.print("Enter Patient ID: ");
                     int patientId = scanner.nextInt();
                     scanner.nextLine();
 
@@ -231,9 +231,55 @@ System.out.print("Enter Patient ID: ");
                     manager.bookAppointment(patient, selectedPhysio, selectedTreatment);
                     break;
                 case 2:
-                    System.out.print("under construction");
+                    System.out.print("Enter Booking ID to cancel: ");
+                    int bookingIdCancel = scanner.nextInt();
+                    scanner.nextLine();  
+                    if (manager.cancelBooking(bookingIdCancel)) {
+                        System.out.println("Booking canceled successfully!");
+                    } else {
+                        System.out.println("Booking cancellation failed.");
+                    }
+                    break;
+
                 case 3:
-                    System.out.print("under construction");
+                    System.out.print("Enter Booking ID to change: ");
+                    int bookingIdChange = scanner.nextInt();
+                    scanner.nextLine(); 
+                
+                    Booking existingBooking = manager.findBookingById(bookingIdChange);
+                    
+                    if (existingBooking == null) {
+                        System.out.println("Booking not found.");
+                        break;
+                    }
+                
+                    System.out.print("Enter new Physiotherapist ID: ");
+                    int physioIdChange = scanner.nextInt();
+                    scanner.nextLine();  
+                
+                    Physiotherapist physiotherapistChange = manager.getPhysiotherapistById(physioIdChange);
+                
+                    if (physiotherapistChange == null) {
+                        System.out.println("Physiotherapist not found.");
+                        break;
+                    }
+                
+                    System.out.print("Enter new Treatment name: ");
+                    String newTreatmentName = scanner.nextLine();
+                
+                    Treatment newTreatment = findTreatmentByName(physiotherapistChange, newTreatmentName);
+                
+                    if (newTreatment == null) {
+                        System.out.println("Treatment not available.");
+                        break;
+                    }
+                
+                    if (manager.changeBooking(bookingIdChange, newTreatment)) {
+                        System.out.println("Booking changed successfully!");
+                    } else {
+                        System.out.println("Booking change failed.");
+                    }
+                    break;
                 case 4:
                     System.out.print("under construction");
                 case 5:
