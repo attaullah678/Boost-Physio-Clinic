@@ -1,9 +1,10 @@
-import model.*;
 import controller.*;
 import java.util.*;
+import model.*;
 
 public class Main {
     public static void main(String[] args) {
+
         BookingManager manager = new BookingManager();
 
         Treatment t1 = new Treatment("Swedish Massage", "Massage", "2025-05-01 10:00");
@@ -23,12 +24,14 @@ public class Main {
         Treatment t15 = new Treatment("Relaxing Massage Plus", "Massage", "2025-05-16 10:30");
         Treatment t16 = new Treatment("Elite Physio Care", "Physiotherapy", "2025-05-23 11:15");
 
+       
         Physiotherapist physio1 = new Physiotherapist(1, "Samantha Green", "101 Health St", "1231231234", Arrays.asList("Massage", "Physiotherapy"));
         Physiotherapist physio2 = new Physiotherapist(2, "Thomas Wright", "202 Rehab Lane", "4321432143", Arrays.asList("Rehabilitation", "Stretching"));
         Physiotherapist physio3 = new Physiotherapist(3, "Natalie Brooks", "303 Therapy Blvd", "3456345634", Arrays.asList("Hydrotherapy", "Manual Therapy"));
         Physiotherapist physio4 = new Physiotherapist(4, "Edward Turner", "404 Wellness Rd", "6789678967", Arrays.asList("Sports Therapy", "Massage", "Physiotherapy"));
 
-        
+
+        Map<String, List<Treatment>> timetable1 = new HashMap<>();
         timetable1.put("Week 1", Arrays.asList(t1, t2));
         timetable1.put("Week 2", Arrays.asList(t3, t4));
         timetable1.put("Week 3", Arrays.asList(t15));
@@ -79,7 +82,6 @@ public class Main {
         manager.addPhysiotherapist(physio3);
         manager.addPhysiotherapist(physio4);
 
-        // PATIENTS
         Patient patient1 = new Patient("Adam Cross", "10 Sycamore St", "1112223333");
         Patient patient2 = new Patient("Beth Nolan", "11 Redwood Ave", "2223334444");
         Patient patient3 = new Patient("Clark Kent", "12 Krypton Lane", "3334445555");
@@ -107,9 +109,9 @@ public class Main {
         manager.addPatient(patient12);
         
         Booking booking1 = manager.bookAppointment(patient1, physio1, t1); 
-        Booking booking2 = manager.bookAppointment(patient2, physio2, t5); 
-        Booking booking3 = manager.bookAppointment(patient3, physio3, t9); 
-        Booking booking4 = manager.bookAppointment(patient4, physio4, t13);
+        Booking booking2 = manager.bookAppointment(patient2, physio2, t5);  
+        Booking booking3 = manager.bookAppointment(patient3, physio3, t9);  
+        Booking booking4 = manager.bookAppointment(patient4, physio4, t13); 
         Booking booking5 = manager.bookAppointment(patient5, physio1, t3);
 
         Scanner scanner = new Scanner(System.in);
@@ -130,7 +132,7 @@ public class Main {
 
             System.out.print("Choose an option: ");
             int choice = scanner.nextInt();
-            scanner.nextLine();  // Consume newline
+            scanner.nextLine();  
 
             switch (choice) {
                 case 1:
@@ -152,7 +154,6 @@ public class Main {
                     Treatment selectedTreatment = null;
 
                     if (c == 1) {
-                        // Expertise-based booking
                         Set<String> allExpertise = new HashSet<>();
                         for (Physiotherapist p : manager.getPhysiotherapists()) {
                             allExpertise.addAll(p.getAreasOfExpertise());
@@ -184,7 +185,6 @@ public class Main {
                             .findFirst().orElse(null);
 
                     } else if (c == 2) {
-                        // Physiotherapist-based booking
                         System.out.println("Available Physiotherapists:");
                         for (Physiotherapist p : manager.getPhysiotherapists()) {
                             System.out.println(p.getId() + " - " + p.getName());
@@ -230,6 +230,7 @@ public class Main {
 
                     manager.bookAppointment(patient, selectedPhysio, selectedTreatment);
                     break;
+
                 case 2:
                     System.out.print("Enter Booking ID to cancel: ");
                     int bookingIdCancel = scanner.nextInt();
@@ -280,14 +281,23 @@ public class Main {
                         System.out.println("Booking change failed.");
                     }
                     break;
+                
                 case 4:
-                    System.out.print("under construction");
+                    System.out.print("Enter Booking ID to attend: ");
+                    int bookingIdAttend = scanner.nextInt();
+                    scanner.nextLine();  // Consume newline
+                    manager.attendAppointment(bookingIdAttend);
+                    System.out.println("Appointment attended.");
+                    break;
+
                 case 5:
-                    System.out.print("under construction");
+                    manager.printReport();
+                    break;
+
                 case 6:
                     System.out.print("Enter Patient ID to remove: ");
                     int patientIdRemove = scanner.nextInt();
-                    scanner.nextLine();
+                    scanner.nextLine(); 
                     if (manager.removePatient(patientIdRemove)) {
                         System.out.println("Patient removed successfully!");
                     } else {
@@ -357,5 +367,15 @@ public class Main {
         }
     }
 
-   
+    private static Treatment findTreatmentByName(Physiotherapist physiotherapist, String treatmentName) {
+        for (Map.Entry<String, List<Treatment>> entry : physiotherapist.getTimetable().entrySet()) {
+            for (Treatment t : entry.getValue()) {
+                if (t.getName().equalsIgnoreCase(treatmentName)) {
+                    return t;
+                }
+            }
+        }
+        System.out.println("Treatment not found.");
+        return null;
+    }
 }
