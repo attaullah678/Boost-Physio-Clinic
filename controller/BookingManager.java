@@ -88,12 +88,9 @@ public class BookingManager {
     public boolean changeBooking(int bookingId, Treatment newTreatment) {
         Booking existingBooking = findBookingById(bookingId);
         if (existingBooking != null) {
-            // 1. Free up the old treatment slot
             existingBooking.getTreatment().setStatus(AppointmentStatus.AVAILABLE);
-    
-            // 2. Change the treatment for the existing booking
             existingBooking.setTreatment(newTreatment);
-            newTreatment.setStatus(AppointmentStatus.BOOKED); // Mark new treatment as booked
+            newTreatment.setStatus(AppointmentStatus.BOOKED); 
     
             return true;
         }
@@ -121,7 +118,83 @@ public class BookingManager {
         }
         return null;
     }
+public void attendAppointment(int bookingId) {
+        Booking booking = findBookingById(bookingId);
+        if (booking != null) {
+            booking.attend();
+            System.out.println("Appointment " + bookingId + " marked as attended.");
+        } else {
+            System.out.println("Booking ID not found for attendance.");
+        }
+    }
 
+    public void printReport() {
+        System.out.println("----- Clinic Report -----\n");
     
+        for (Physiotherapist physio : physiotherapists) {
+            System.out.println("Physiotherapist: " + physio.getName());
+            Map<String, List<Treatment>> timetable = physio.getTimetable();
     
+            for (String week : timetable.keySet()) {
+                System.out.println("  " + week + ":");
+                List<Treatment> treatments = timetable.get(week);
+    
+                for (Treatment treatment : treatments) {
+                    String patientName = "None";
+                    for (Booking booking : bookings) {
+                        if (booking.getTreatment().equals(treatment)) {
+                            patientName = booking.getPatient().getName();
+                            break;
+                        }
+                    }
+                    System.out.println("    Treatment: " + treatment.getName()
+                            + " | Patient: " + patientName
+                            + " | Time: " + treatment.getDateTime()
+                            + " | Status: " + treatment.getStatus());
+                }
+            }
+            System.out.println();
+        }
+    
+        Map<String, Integer> attendanceCount = new HashMap<>();
+        for (Booking booking : bookings) {
+            String physioName = booking.getPhysiotherapist().getName();
+            if (booking.getStatus() == AppointmentStatus.ATTENDED) {
+                attendanceCount.put(physioName, attendanceCount.getOrDefault(physioName, 0) + 1);
+            }
+        }
+    
+        System.out.println("----- Physiotherapist Rankings by Attended Appointments -----");
+        physiotherapists.sort((p1, p2) -> {
+            int count1 = attendanceCount.getOrDefault(p1.getName(), 0);
+            int count2 = attendanceCount.getOrDefault(p2.getName(), 0);
+            return Integer.compare(count2, count1);
+        });
+    
+        int rank = 1;
+        for (Physiotherapist physio : physiotherapists) {
+            int count = attendanceCount.getOrDefault(physio.getName(), 0);
+            System.out.println(rank + ". " + physio.getName() + " - " + count + " attended");
+            rank++;
+        }
+    }
+    
+
+    public Patient getPatientById(int patientId) {
+        for (Patient patient : patients) {
+            if (patient.getId() == patientId) {
+                return patient;
+            }
+        }
+        return null;
+    }
+
+    public Physiotherapist getPhysiotherapistById(int physioId) {
+        for (Physiotherapist physiotherapist : physiotherapists) {
+            if (physiotherapist.getId() == physioId) {
+                return physiotherapist;
+            }
+        }
+        return null; 
+    }
 }
